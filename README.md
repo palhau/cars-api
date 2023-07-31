@@ -8,7 +8,9 @@ For use this API with another database you can change the link connecting in the
 
 ### Prerequisites
 
-First of all you need to install all de dependecies used in this API:
+This project uses BULL in order to work with Bull, you also need to have a Redis server running. For local development you can easily install it using [Docker](https://hub.docker.com/_/redis/)
+
+Install all de dependecies used in this API:
 
 ```
 npm install

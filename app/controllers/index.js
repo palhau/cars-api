@@ -2,6 +2,8 @@ const CarLog = require('../models/index.js');
 const { randomUUID } = require('crypto');
 const http = require('http');
 
+const { createdCarsQueue } = require('../queues/createdCars.js');
+
 module.exports.create = (req, res) => {
   let data = '';
 
@@ -42,6 +44,8 @@ module.exports.create = (req, res) => {
         car_id: data._id,
         data_hora: Date.now,
       });
+
+      createdCarsQueue.add({ ...postData });
 
       return carLog
         .save()
@@ -105,4 +109,11 @@ module.exports.logs = (_req, res) => {
           err.message || 'Some error ocurred while retrieving the drivers.',
       });
     });
+};
+
+module.exports.queueHook = (_req, res) => {
+  res.json({
+    message:
+      'Car Created Successfully',
+  });
 };
