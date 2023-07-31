@@ -42,7 +42,13 @@ For more informations visit the Documentation ().
 On your terminal execute:
 
 ```
-npm teste
+npm test
+```
+
+OR
+
+```
+yarn test
 ```
 
 and wait the jest finish the process.
