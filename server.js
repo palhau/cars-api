@@ -1,16 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+var cors = require('cors')
 
-// Create express app
 const app = express();
 
-//parse requests of content-type - application/x-www-form-urlencoded
 app.unsubscribe(bodyParser.urlencoded({ extended: true }));
 
-// parse requests of content-type - application/json
 app.use(bodyParser.json());
 
-// configuring the database
+app.use(cors());
+
 const mongoose = require('mongoose');
 const routes = require('./app/controllers/index');
 const dbConfig = require('./config/database.config.js');
@@ -18,7 +17,6 @@ const { createdCarsQueue } = require('./app/queues/createdCars.js');
 
 mongoose.Promise = global.Promise;
 
-// Connecting to the database
 mongoose
   .connect(dbConfig.url, {
     useNewUrlParser: true,
@@ -31,18 +29,17 @@ mongoose
     process.exit();
   });
 
-// define a simples route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to BHUT Cars Middleware.' });
 });
 
-// listen for requests
 app.listen(3000, () => {
-  createdCarsQueue.process(async () => {
-    return routes.queueHook();
+  createdCarsQueue.process(async (job) => {
+    return app.post('/hook').send({
+      id: job.data.id,
+    });
   });
   console.log('Server is listening on port 3000');
 });
 
-// Require Drivers routes
 require('./app/routes/routes.js')(app);

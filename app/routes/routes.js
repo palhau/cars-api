@@ -7,5 +7,5 @@ module.exports = (app) => {
 
   app.get('/api/logs', routes.logs);
 
-  app.get('/api/hook', routes.queueHook);
+  app.post('/api/hook', routes.queueHook); // Internal use only
 }
