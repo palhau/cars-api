@@ -6,4 +6,6 @@ module.exports = (app) => {
   app.get('/api/listCars', routes.list);
 
   app.get('/api/logs', routes.logs);
+
+  app.get('/api/hook', routes.queueHook);
 }
