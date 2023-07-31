@@ -1,15 +1,14 @@
 const CarLog = require('../models/index.js');
-const { randomUUID } = require('crypto');
 const { createdCarsQueue } = require('../queues/createdCars.js');
 
 module.exports.create = async (req, res) => {
+  if (!Object.keys(req.body).length) {
+    return res.status(400).json({
+      message: 'Form content can not be empty',
+    });
+  }
   try {
     const fetch = (await import('node-fetch')).default;
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        message: 'Form content can not be empty',
-      });
-    }
 
     const postData = JSON.stringify({
       title: req.body.title,
@@ -18,10 +17,12 @@ module.exports.create = async (req, res) => {
       age: req.body.age,
     });
 
+    console.log(postData);
+
     const response = await fetch('http://api-test.bhut.com.br:3000/api/cars', {
       method: 'POST',
       body: postData,
-      headers: {'Content-Type': 'application/json'}
+      headers: { 'Content-Type': 'application/json' },
     });
     const data = await response.json();
 
@@ -40,7 +41,7 @@ module.exports.create = async (req, res) => {
       .catch((error) => {
         res.status(500).send({
           message:
-            error.message + data._id || 'Some error ocurred while creating the car log.',
+            error.message || 'Some error ocurred while creating the car log.',
         });
       });
   } catch (error) {
@@ -71,8 +72,7 @@ module.exports.logs = (_req, res) => {
     })
     .catch((err) => {
       res.status(500).json({
-        message:
-          err.message || 'Some error ocurred while retrieving the logs.',
+        message: err.message || 'Some error ocurred while retrieving the logs.',
       });
     });
 };
@@ -81,13 +81,12 @@ module.exports.queueHook = (_req, res) => {
   try {
     res.json({
       message: 'Car Created Successfully',
-      id: req.body.id
+      id: req.body.id,
     });
-    res.status(200).end()
+    res.status(200).end();
   } catch (error) {
     res.status(500).json({
-      message:
-      error.message || 'Some error ocurred while sending the message.',
+      message: error.message || 'Some error ocurred while sending the message.',
     });
   }
 };
